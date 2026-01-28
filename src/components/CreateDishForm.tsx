@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Dish, CategoryName } from '../types';
 import { CATEGORIES } from '../constants';
 import { CategoryIngredients } from './CategoryIngredients';
@@ -24,8 +24,11 @@ export function CreateDishForm({ dishes, onSave, editingDish, onCancelEdit }: Cr
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<IngredientsState>(getEmptyIngredients());
   const [errors, setErrors] = useState<ValidationError[]>([]);
+  const [prevEditingDishId, setPrevEditingDishId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const currentEditingDishId = editingDish?.id ?? null;
+  if (currentEditingDishId !== prevEditingDishId) {
+    setPrevEditingDishId(currentEditingDishId);
     if (editingDish) {
       setName(editingDish.name);
       setIngredients({
@@ -41,9 +44,11 @@ export function CreateDishForm({ dishes, onSave, editingDish, onCancelEdit }: Cr
       });
       setErrors([]);
     } else {
-      resetForm();
+      setName('');
+      setIngredients(getEmptyIngredients());
+      setErrors([]);
     }
-  }, [editingDish]);
+  }
 
   const resetForm = () => {
     setName('');

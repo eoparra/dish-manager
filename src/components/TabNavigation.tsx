@@ -7,7 +7,7 @@ interface TabNavigationProps {
 
 export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   return (
-    <div className="flex border-b border-gray-200 mb-6">
+    <div className="flex border-b border-gray-200">
       <button
         onClick={() => onTabChange('create')}
         className={`px-6 py-3 font-medium text-sm transition-colors ${
