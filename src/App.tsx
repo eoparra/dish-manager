@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import type { Dish, TabType } from './types';
+import type { Dish, TabType, CategoryName } from './types';
 import { useFirestore } from './hooks/useFirestore';
+import { useIngredientSuggestions } from './hooks/useIngredientSuggestions';
+import { CATEGORIES } from './constants';
 import { Header } from './components/Header';
 import { TabNavigation } from './components/TabNavigation';
 import { CreateDishForm } from './components/CreateDishForm';
@@ -8,6 +10,7 @@ import { BrowseDishes } from './components/BrowseDishes';
 
 function App() {
   const { dishes, loading, error, addDish, updateDish, deleteDish } = useFirestore();
+  const { knownIngredients, addNewIngredients } = useIngredientSuggestions();
   const [activeTab, setActiveTab] = useState<TabType>('create');
   const [editingDish, setEditingDish] = useState<Dish | null>(null);
 
@@ -22,6 +25,28 @@ function App() {
         createdAt: new Date().toISOString(),
       };
       await addDish(newDish);
+    }
+
+    // After saving the dish, add any new ingredients to the suggestions
+    await saveNewIngredients(dishData.ingredients);
+  };
+
+  /**
+   * Adds new ingredients from the dish to Firestore.
+   * Compares against known ingredients and only adds truly new ones.
+   */
+  const saveNewIngredients = async (
+    ingredients: Record<CategoryName, string[]>
+  ) => {
+    try {
+      await Promise.all(
+        CATEGORIES.map((category) =>
+          addNewIngredients(category, ingredients[category])
+        )
+      );
+    } catch (err) {
+      // Log but don't fail the dish save - ingredient suggestions are non-critical
+      console.error('Failed to save new ingredients:', err);
     }
   };
 
@@ -88,6 +113,7 @@ function App() {
             onSave={handleSaveDish}
             editingDish={editingDish}
             onCancelEdit={handleCancelEdit}
+            knownIngredients={knownIngredients}
           />
         )}
 

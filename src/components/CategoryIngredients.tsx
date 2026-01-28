@@ -5,6 +5,7 @@ interface CategoryIngredientsProps {
   category: CategoryName;
   ingredients: string[];
   onChange: (ingredients: string[]) => void;
+  suggestions?: string[];
 }
 
 const CATEGORY_COLORS: Record<CategoryName, { bg: string; border: string; text: string }> = {
@@ -13,7 +14,12 @@ const CATEGORY_COLORS: Record<CategoryName, { bg: string; border: string; text: 
   'Supermarket': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' },
 };
 
-export function CategoryIngredients({ category, ingredients, onChange }: CategoryIngredientsProps) {
+export function CategoryIngredients({
+  category,
+  ingredients,
+  onChange,
+  suggestions = [],
+}: CategoryIngredientsProps) {
   const colors = CATEGORY_COLORS[category];
 
   const handleIngredientChange = (index: number, value: string) => {
@@ -43,6 +49,7 @@ export function CategoryIngredients({ category, ingredients, onChange }: Categor
             onRemove={() => handleRemoveIngredient(index)}
             canRemove={ingredients.length > 1}
             placeholder={`Add ${category.toLowerCase()} ingredient...`}
+            suggestions={suggestions}
           />
         ))}
       </div>

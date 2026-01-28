@@ -10,6 +10,7 @@ interface CreateDishFormProps {
   onSave: (dish: Omit<Dish, 'id' | 'createdAt'>) => void;
   editingDish: Dish | null;
   onCancelEdit: () => void;
+  knownIngredients?: Record<CategoryName, string[]>;
 }
 
 type IngredientsState = Record<CategoryName, string[]>;
@@ -20,7 +21,19 @@ const getEmptyIngredients = (): IngredientsState => ({
   'Supermarket': [''],
 });
 
-export function CreateDishForm({ dishes, onSave, editingDish, onCancelEdit }: CreateDishFormProps) {
+const defaultKnownIngredients: Record<CategoryName, string[]> = {
+  'Fruit shop': [],
+  'Butchery': [],
+  'Supermarket': [],
+};
+
+export function CreateDishForm({
+  dishes,
+  onSave,
+  editingDish,
+  onCancelEdit,
+  knownIngredients = defaultKnownIngredients,
+}: CreateDishFormProps) {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<IngredientsState>(getEmptyIngredients());
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -126,6 +139,7 @@ export function CreateDishForm({ dishes, onSave, editingDish, onCancelEdit }: Cr
             category={category}
             ingredients={ingredients[category]}
             onChange={(newIngredients) => handleCategoryChange(category, newIngredients)}
+            suggestions={knownIngredients[category]}
           />
         ))}
       </div>
