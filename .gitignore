@@ -25,7 +25,9 @@ coverage/
 .firebase/
 
 # Claude AI
-.claude/
+.claude/*
+!.claude/docs/
+!.claude/skills/
 
 # Editor directories and files
 .vscode/*
