@@ -2,17 +2,33 @@ import { useState } from 'react';
 import type { Dish, TabType, CategoryName } from './types';
 import { useFirestore } from './hooks/useFirestore';
 import { useIngredientSuggestions } from './hooks/useIngredientSuggestions';
-import { CATEGORIES } from './constants';
+import { CATEGORIES, ADMIN_PASSWORD, ADMIN_AUTH_STORAGE_KEY } from './constants';
 import { Header } from './components/Header';
 import { TabNavigation } from './components/TabNavigation';
 import { CreateDishForm } from './components/CreateDishForm';
 import { BrowseDishes } from './components/BrowseDishes';
+import { AdminLogin } from './components/AdminLogin';
 
 function App() {
   const { dishes, loading, error, addDish, updateDish, deleteDish } = useFirestore();
   const { knownIngredients, addNewIngredients } = useIngredientSuggestions();
   const [activeTab, setActiveTab] = useState<TabType>('create');
   const [editingDish, setEditingDish] = useState<Dish | null>(null);
+
+  const isAdminPath = window.location.pathname === '/admin';
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() =>
+    localStorage.getItem(ADMIN_AUTH_STORAGE_KEY) === 'true'
+  );
+  const isAdmin = isAdminPath && isAdminAuthenticated;
+
+  const handleAdminLogin = (password: string): boolean => {
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem(ADMIN_AUTH_STORAGE_KEY, 'true');
+      setIsAdminAuthenticated(true);
+      return true;
+    }
+    return false;
+  };
 
   const handleSaveDish = async (dishData: Omit<Dish, 'id' | 'createdAt'>) => {
     if (editingDish) {
@@ -99,6 +115,10 @@ function App() {
     );
   }
 
+  if (isAdminPath && !isAdminAuthenticated) {
+    return <AdminLogin onLogin={handleAdminLogin} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -122,6 +142,7 @@ function App() {
             dishes={dishes}
             onEdit={handleEditDish}
             onDelete={handleDeleteDish}
+            isAdmin={isAdmin}
           />
         )}
       </main>

@@ -11,9 +11,10 @@ interface BrowseDishesProps {
   dishes: Dish[];
   onEdit: (dish: Dish) => void;
   onDelete: (id: string) => void;
+  isAdmin: boolean;
 }
 
-export function BrowseDishes({ dishes, onEdit, onDelete }: BrowseDishesProps) {
+export function BrowseDishes({ dishes, onEdit, onDelete, isAdmin }: BrowseDishesProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [dishToDelete, setDishToDelete] = useState<Dish | null>(null);
@@ -97,6 +98,7 @@ export function BrowseDishes({ dishes, onEdit, onDelete }: BrowseDishesProps) {
             onToggleSelect={handleToggleSelect}
             onEdit={onEdit}
             onDelete={handleDeleteRequest}
+            isAdmin={isAdmin}
           />
         </div>
 

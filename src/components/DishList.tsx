@@ -7,9 +7,10 @@ interface DishListProps {
   onToggleSelect: (id: string) => void;
   onEdit: (dish: Dish) => void;
   onDelete: (dish: Dish) => void;
+  isAdmin: boolean;
 }
 
-export function DishList({ dishes, selectedIds, onToggleSelect, onEdit, onDelete }: DishListProps) {
+export function DishList({ dishes, selectedIds, onToggleSelect, onEdit, onDelete, isAdmin }: DishListProps) {
   if (dishes.length === 0) {
     return (
       <div className="text-center py-12">
@@ -42,6 +43,7 @@ export function DishList({ dishes, selectedIds, onToggleSelect, onEdit, onDelete
           onToggleSelect={() => onToggleSelect(dish.id)}
           onEdit={() => onEdit(dish)}
           onDelete={() => onDelete(dish)}
+          isAdmin={isAdmin}
         />
       ))}
     </div>
