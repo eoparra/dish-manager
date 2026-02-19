@@ -7,6 +7,7 @@ interface DishCardProps {
   onToggleSelect: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  isAdmin: boolean;
 }
 
 const CATEGORY_BADGE_COLORS: Record<CategoryName, string> = {
@@ -15,7 +16,7 @@ const CATEGORY_BADGE_COLORS: Record<CategoryName, string> = {
   'Supermarket': 'bg-blue-100 text-blue-700',
 };
 
-export function DishCard({ dish, isSelected, onToggleSelect, onEdit, onDelete }: DishCardProps) {
+export function DishCard({ dish, isSelected, onToggleSelect, onEdit, onDelete, isAdmin }: DishCardProps) {
   const totalIngredients = CATEGORIES.reduce(
     (sum, cat) => sum + dish.ingredients[cat].length,
     0
@@ -66,20 +67,22 @@ export function DishCard({ dish, isSelected, onToggleSelect, onEdit, onDelete }:
         </div>
       </div>
 
-      <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
-        <button
-          onClick={onEdit}
-          className="flex-1 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 py-1.5 rounded transition-colors"
-        >
-          Edit
-        </button>
-        <button
-          onClick={onDelete}
-          className="flex-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 py-1.5 rounded transition-colors"
-        >
-          Delete
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+          <button
+            onClick={onEdit}
+            className="flex-1 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 py-1.5 rounded transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            onClick={onDelete}
+            className="flex-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 py-1.5 rounded transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }
