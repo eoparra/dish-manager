@@ -20,11 +20,10 @@ export function BrowseDishes({ dishes, onEdit, onDelete, isAdmin }: BrowseDishes
   const [dishToDelete, setDishToDelete] = useState<Dish | null>(null);
 
   const filteredDishes = useMemo(() => {
-    if (!searchQuery.trim()) return dishes;
-    const query = searchQuery.toLowerCase();
-    return dishes.filter(dish =>
-      dish.name.toLowerCase().includes(query)
-    );
+    const filtered = searchQuery.trim()
+      ? dishes.filter(dish => dish.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      : [...dishes];
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
   }, [dishes, searchQuery]);
 
   const selectedDishes = useMemo(() =>
